@@ -3,9 +3,10 @@ test repository for the first day of the SASAP reproducible research training
 
 ## More sections
 
-- apples
-  +fuji
-  +gala
+- apple
+  + fuji
+  + gala
   
-- bananas
-- oranges
+- banana
+- orange
+- kiwi
