@@ -1,0 +1,126 @@
+---
+title: "data cleaning"
+author: "Rich Brenner"
+date: "November 28, 2017"
+output: html_document
+---
+
+'''{r}
+catch <- read.csv("df35b.302.1.csv", 
+    stringsAsFactors = FALSE)
+'''
+
+
+'''{r}
+library(dplyr)        
+library(tidyr)
+'''
+
+'''{r}
+catch %>% 
+    select(-All, -notesRegCode) -> catch
+'''
+
+'''{r}
+#catch %>% 
+    #select(Region, Year, Chinook)
+'''
+
+'''{r}
+catch %>% 
+    gather(species, catch, -Region, -Year) ->catch
+'''
+
+'''{r}
+#Below: remove the "I" and replace with a "1"
+summary(catch)
+catch_integers <- as.integer(catch$catch) 
+which(is.na(catch_integers))
+catch[401, "catch"] <- 1
+catch[401, ] #check to see if this has been successfully changed to 1
+'''
+
+'''{r}
+catch <- catch %>%
+  mutate(catch = as.integer(catch))
+summary(catch)  
+'''
+
+'''{r}
+catch <- catch %>%
+  mutate(catch = catch * 1000)
+summary(catch)  
+'''
+
+
+'''{r}
+catch %>%
+  group_by(Region) %>%
+  summarize(mean_catch = mean(catch))
+'''
+
+'''{r}
+sample_size <- catch %>% 
+  group_by(Region) %>%
+  summarize(n = n())
+'''
+
+'''{r}
+#Filter out all but the catches from SSE
+sse_catches <- catch %>%
+  filter(Region == "SSE")
+sse_catches  
+'''
+
+
+
+'''{r}
+large_catches <- catch %>%
+filter(catch >1000000)
+summary(large_catches)
+'''
+
+'''{r}
+large_sse_catch <- catch %>%
+  filter(catch >1000000 & Region == "SSE")
+summary(large_sse_catch)
+'''
+
+'''{r}
+large_sse_catch %>%
+arrange(desc(species), Year)
+'''
+
+'''{r}
+region_defs <- read.csv("df35b.303.1.csv", stringsAsFactors = FALSE)
+#Bring data together into a single table (join)
+
+catch %>%
+  group_by(Region) %>%
+  summarise(total_catch = sum(catch)) %>%
+  #because they are named differently in each table:
+  left_join(region_defs, by = c("Region" = "code")) 
+'''
+
+'''{r}
+dates_df <- data.frame(date = c("5/24/1930",
+                                "5/25/1930",
+                                "5/26/1930",
+                                "5/27/1930",
+                                "5/28/1930"),
+                       stringsAsFactors = FALSE)
+dates_df %>% 
+  separate(date, c("month", "day", "year"), "/") #describes what the new columns will be
+
+'''
+
+'''{r}
+'''
+
+'''{r}
+'''
+
+'''{r}
+'''
+
+
