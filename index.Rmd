@@ -8,68 +8,54 @@ output: html_document
 
 Hello World
 
-'''{r}
-escapement <- read.csv("knb.92020.1.csv",, stringsAsFactors = FALSE)
-escapement
-'''
+```{r}
+escapement <- read.csv("knb.92020.1.csv", stringsAsFactors = FALSE)
+```
 
-'''{r}
+```{r}
 library(tidyr)
+library(ggplot2)
 library(dplyr)
 library(leaflet)
 library(DT)
-'''
+```
 
 
-'''{r}
+```{r}
 median_esc <- escapement %>%
   separate(sampleDate, c("Year", "Month", "Day"), sep = "-") %>%
   group_by(Species, Location, Year) %>%
-  summarise(escapement = sum(DailyCount)) %>%
+  summarise(escapement = sum(DailyCount, na.rm = TRUE)) %>% #ignore the NAs
   group_by(Species) %>%
   summarise(median_escapement = median(escapement))
 median_esc  
-'''
+```
 
+Create a bar plot
+```{r}
+ggplot(median_esc, aes(Species, median_escapement)) +
+  geom_col() +  #bar plot
+  coord_flip()
+```
 
-'''{r}
-
-
-'''
-
-
-'''{r}
-
-'''
-
-
-'''{r}
-
-'''
+Make an interactive table
+```{r}
+datatable(median_esc)  
+```
 
 
 
-'''{r}
+```{r}
+location <- escapement %>%
+  distinct(Location, Latitude, Longitude) %>%
+  drop_na()
+head(location)
 
-'''
+leaflet(location) %>%
+  addTiles() %>%  #uses open street map from Google 
+addMarkers(~ -abs(Longitude), ~ Latitude, popup = ~ Location)
+```
 
+```{r}
 
-'''{r}
-
-'''
-
-
-
-'''{r}
-
-'''
-
-
-'''{r}
-
-'''
-
-
-'''{r}
-
-'''
+```
